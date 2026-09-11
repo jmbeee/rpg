@@ -24,10 +24,15 @@ public class Main {
             ImageIcon scaledGif = new ImageIcon(gif.getImage().getScaledInstance(-1, 600, Image.SCALE_REPLICATE));
             JLabel background = new JLabel(scaledGif);
             background.setLayout(new BorderLayout());
-            
+
             JButton enterGame = new JButton("Enter Game");
-            enterGame.addActionListener(event ->
-                JOptionPane.showMessageDialog(window, "test"));
+
+            // move to the next page or panel
+            enterGame.addActionListener(event -> {
+                window.setContentPane(new SelectionPanel());
+                window.revalidate();
+            });
+
             JPanel buttons = new JPanel(new GridBagLayout());
             buttons.setOpaque(false);
             buttons.add(enterGame);
