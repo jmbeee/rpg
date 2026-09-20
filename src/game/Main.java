@@ -29,7 +29,15 @@ public class Main {
 
             // move to the next page or panel
             enterGame.addActionListener(event -> {
-                window.setContentPane(new SelectionPanel());
+                Runnable onBack = () -> {
+                    window.setContentPane(background);
+                    window.revalidate();
+                    window.repaint();
+                };
+                Runnable onContinue = () -> {
+                    JOptionPane.showMessageDialog(window, "Camp feature coming soon!");
+                };
+                window.setContentPane(new SelectionPanel(onBack, onContinue));
                 window.revalidate();
             });
 
