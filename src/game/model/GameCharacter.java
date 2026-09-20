@@ -45,4 +45,10 @@ public abstract class GameCharacter {
         int finalDamage = Math.max(1, damage - defense);
         health = Math.max(0, health - finalDamage);
     }
+
+    public void attack(GameCharacter target) {
+        target.takeDamage(attack);
+    }
+
+    public abstract String useAbility();
 }
