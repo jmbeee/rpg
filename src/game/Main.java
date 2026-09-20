@@ -1,14 +1,13 @@
 package game;
 
+import game.view.CampPanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -35,7 +34,9 @@ public class Main {
                     window.repaint();
                 };
                 Runnable onContinue = () -> {
-                    JOptionPane.showMessageDialog(window, "Camp feature coming soon!");
+                    window.setContentPane(new CampPanel());
+                    window.revalidate();
+                    window.repaint();
                 };
                 window.setContentPane(new SelectionPanel(onBack, onContinue));
                 window.revalidate();
