@@ -1,5 +1,9 @@
 package game;
 
+import game.model.AncientKey;
+import game.model.HealthPotion;
+import game.model.Inventory;
+import game.model.IronSword;
 import game.view.BattlePanel;
 import game.view.CampPanel;
 import java.awt.BorderLayout;
@@ -17,6 +21,11 @@ public class Main {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            Inventory inventory = new Inventory();
+            inventory.addItem(new HealthPotion());
+            inventory.addItem(new IronSword());
+            inventory.addItem(new AncientKey());
+
             JFrame window = new JFrame("Journey to the Demon King");
             window.setSize(800, 600);
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
