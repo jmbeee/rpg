@@ -8,12 +8,15 @@ import javax.swing.JPanel;
 /** screen shown before starting a battle. */
 public class CampPanel extends JPanel {
 
-    public CampPanel() {
+    public CampPanel(Runnable onStart) {
         setLayout(new GridLayout(4, 1, 10, 10));
 
         add(new JLabel("Party Camp", JLabel.CENTER));
         add(new JButton("View Party"));
         add(new JButton("Inventory"));
-        add(new JButton("Start Journey"));
+
+        JButton startButton = new JButton("Start Journey");
+        startButton.addActionListener(event -> onStart.run());
+        add(startButton);
     }
 }

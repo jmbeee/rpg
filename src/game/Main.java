@@ -1,5 +1,6 @@
 package game;
 
+import game.view.BattlePanel;
 import game.view.CampPanel;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
@@ -34,7 +35,12 @@ public class Main {
                     window.repaint();
                 };
                 Runnable onContinue = () -> {
-                    window.setContentPane(new CampPanel());
+                    Runnable onStart = () -> {
+                        window.setContentPane(new BattlePanel());
+                        window.revalidate();
+                        window.repaint();
+                    };
+                    window.setContentPane(new CampPanel(onStart));
                     window.revalidate();
                     window.repaint();
                 };
