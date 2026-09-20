@@ -6,6 +6,7 @@ import game.model.Inventory;
 import game.model.IronSword;
 import game.view.BattlePanel;
 import game.view.CampPanel;
+import game.view.InventoryPanel;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -43,16 +44,7 @@ public class Main {
                     window.revalidate();
                     window.repaint();
                 };
-                Runnable onContinue = () -> {
-                    Runnable onStart = () -> {
-                        window.setContentPane(new BattlePanel());
-                        window.revalidate();
-                        window.repaint();
-                    };
-                    window.setContentPane(new CampPanel(onStart));
-                    window.revalidate();
-                    window.repaint();
-                };
+                Runnable onContinue = () -> showCamp(window, inventory);
                 window.setContentPane(new SelectionPanel(onBack, onContinue));
                 window.revalidate();
             });
@@ -64,5 +56,23 @@ public class Main {
             window.setContentPane(background);
             window.setVisible(true);
         });
+    }
+
+    private static void showCamp(JFrame window, Inventory inventory) {
+        Runnable onStart = () -> {
+            window.setContentPane(new BattlePanel());
+            window.revalidate();
+            window.repaint();
+        };
+        Runnable onInventory = () -> {
+            window.setContentPane(new InventoryPanel(inventory,
+                    () -> showCamp(window, inventory)));
+            window.revalidate();
+            window.repaint();
+        };
+
+        window.setContentPane(new CampPanel(onStart, onInventory));
+        window.revalidate();
+        window.repaint();
     }
 }
