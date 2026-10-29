@@ -3,11 +3,12 @@ package game.model;
 /** potion that restores health. */
 public class HealthPotion extends Item {
 
+    private static final int HEALING_AMOUNT = 30;
     private int healingAmount;
 
     public HealthPotion() {
         super("Health Potion");
-        healingAmount = 30;
+        healingAmount = HEALING_AMOUNT;
     }
 
     public int getHealingAmount() {
