@@ -8,7 +8,8 @@ public class Himmel extends Hero {
     }
 
     @Override
-    public String useAbility() {
-        return "Himmel uses double slash!";
+    public String useAbility(GameCharacter target) {
+        int damage = attack(target) + attack(target);
+        return "Himmel used double slash for " + damage + " damage.";
     }
 }
