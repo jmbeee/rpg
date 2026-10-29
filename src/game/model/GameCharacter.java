@@ -63,25 +63,27 @@ public abstract class GameCharacter implements Attackable, Healable {
         }
     }
 
-    public void takeDamage(int damage) {
+    public int takeDamage(int damage) {
+        int oldHealth = health;
         int finalDamage = Math.max(1, damage - defense);
         health = Math.max(0, health - finalDamage);
+        return oldHealth - health;
     }
 
-    public void takeDamage(int damage, boolean defending) {
+    public int takeDamage(int damage, boolean defending) {
         int reducedDamage = defending ? damage / 2 : damage;
-        takeDamage(reducedDamage);
+        return takeDamage(reducedDamage);
     }
 
     @Override
-    public void attack(GameCharacter target) {
+    public int attack(GameCharacter target) {
         int randomDamage = attack + RANDOM.nextInt(5) - 2;
-        target.takeDamage(randomDamage);
+        return target.takeDamage(randomDamage);
     }
 
-    public void attack(GameCharacter target, boolean defending) {
+    public int attack(GameCharacter target, boolean defending) {
         int randomDamage = attack + RANDOM.nextInt(5) - 2;
-        target.takeDamage(randomDamage, defending);
+        return target.takeDamage(randomDamage, defending);
     }
 
     public abstract String useAbility();
