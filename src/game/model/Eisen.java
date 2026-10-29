@@ -8,7 +8,8 @@ public class Eisen extends Hero {
     }
 
     @Override
-    public String useAbility() {
-        return "Eisen uses heavy strike!";
+    public String useAbility(GameCharacter target) {
+        int damage = target.takeDamage(getAttack() + 8);
+        return "Eisen used heavy strike for " + damage + " damage.";
     }
 }
