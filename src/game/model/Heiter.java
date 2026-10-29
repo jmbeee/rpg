@@ -8,7 +8,10 @@ public class Heiter extends Hero {
     }
 
     @Override
-    public String useAbility() {
-        return "Heiter uses heal!";
+    public String useAbility(GameCharacter target) {
+        int oldHealth = target.getHealth();
+        target.heal(35);
+        return "Heiter healed " + target.getName() + " for "
+                + (target.getHealth() - oldHealth) + " HP.";
     }
 }
