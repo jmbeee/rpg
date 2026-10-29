@@ -3,7 +3,7 @@ package game.model;
 import java.util.Random;
 
 /** base class for game characters. */
-public abstract class GameCharacter {
+public abstract class GameCharacter implements Attackable, Healable {
 
     private static final Random RANDOM = new Random();
     private String name;
@@ -56,6 +56,7 @@ public abstract class GameCharacter {
         return health > 0;
     }
 
+    @Override
     public void heal(int amount) {
         if (isAlive() && amount > 0) {
             health = Math.min(maxHealth, health + amount);
@@ -72,9 +73,15 @@ public abstract class GameCharacter {
         takeDamage(reducedDamage);
     }
 
+    @Override
     public void attack(GameCharacter target) {
         int randomDamage = attack + RANDOM.nextInt(5) - 2;
         target.takeDamage(randomDamage);
+    }
+
+    public void attack(GameCharacter target, boolean defending) {
+        int randomDamage = attack + RANDOM.nextInt(5) - 2;
+        target.takeDamage(randomDamage, defending);
     }
 
     public abstract String useAbility();
