@@ -1,10 +1,18 @@
 package game;
 
+import game.model.Eisen;
+import game.model.Frieren;
+import game.model.Heiter;
+import game.model.Hero;
+import game.model.Himmel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,8 +27,9 @@ public class SelectionPanel extends JPanel {
     private final int MAX_SELECTION = 3;
     private JLabel counterLabel;
     private JButton continueButton;
+    private List<Hero> selectedHeroes = new ArrayList<>();
 
-    public SelectionPanel(Runnable onBack, Runnable onContinue) {
+    public SelectionPanel(Runnable onBack, Consumer<List<Hero>> onContinue) {
         setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -46,9 +55,16 @@ public class SelectionPanel extends JPanel {
             {"Eisen", "Warrior", "140", "25", "10", "8", "Heavy Strike", "eisen.png"}
         };
 
+        Map<String, Hero> heroes = new HashMap<>();
+        heroes.put("Frieren", new Frieren());
+        heroes.put("Himmel", new Himmel());
+        heroes.put("Heiter", new Heiter());
+        heroes.put("Eisen", new Eisen());
+
         List<JCheckBox> checkBoxes = new ArrayList<>();
 
         for (String[] data : heroData) {
+            Hero hero = heroes.get(data[0]);
             JPanel heroCard = new JPanel();
             heroCard.setLayout(new BoxLayout(heroCard, BoxLayout.Y_AXIS));
             heroCard.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
@@ -103,9 +119,11 @@ public class SelectionPanel extends JPanel {
                         selectBox.setSelected(false);
                     } else {
                         selectedCount++;
+                        selectedHeroes.add(hero);
                     }
                 } else {
                     selectedCount--;
+                    selectedHeroes.remove(hero);
                 }
                 updateStatus(checkBoxes);
             });
@@ -129,7 +147,8 @@ public class SelectionPanel extends JPanel {
         
         continueButton = new JButton("Continue");
         continueButton.setEnabled(false);
-        continueButton.addActionListener(e -> onContinue.run());
+        continueButton.addActionListener(e ->
+                onContinue.accept(new ArrayList<>(selectedHeroes)));
         
         bottomPanel.add(backButton);
         bottomPanel.add(continueButton);
@@ -150,4 +169,3 @@ public class SelectionPanel extends JPanel {
         continueButton.setEnabled(maxReached);
     }
 }
-

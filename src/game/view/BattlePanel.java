@@ -1,7 +1,7 @@
 package game.view;
 
 import game.model.DemonScout;
-import game.model.Frieren;
+import game.model.Hero;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,6 +10,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,19 +24,27 @@ public class BattlePanel extends JPanel {
     private BufferedImage backgroundImage;
     private BufferedImage enemyImage;
 
-    public BattlePanel() {
+    public BattlePanel(List<Hero> heroes) {
         setLayout(new BorderLayout());
         loadImages();
 
-        Frieren player = new Frieren();
+        Hero player = heroes.get(0);
         DemonScout enemy = new DemonScout();
-        JLabel playerLabel = new JLabel(getPlayerInfo(player), JLabel.CENTER);
         JLabel enemyLabel = new JLabel(getEnemyInfo(enemy), JLabel.CENTER);
         JLabel resultLabel = new JLabel("Battle started", JLabel.CENTER);
 
+        JPanel heroPanel = new JPanel(new GridLayout(1, heroes.size(), 10, 0));
+        heroPanel.setOpaque(false);
+        List<JLabel> heroLabels = new ArrayList<>();
+        for (Hero hero : heroes) {
+            JLabel heroLabel = new JLabel(getPlayerInfo(hero), JLabel.CENTER);
+            heroLabels.add(heroLabel);
+            heroPanel.add(heroLabel);
+        }
+
         JPanel battleInfo = new JPanel(new GridLayout(3, 1));
         battleInfo.setOpaque(false);
-        battleInfo.add(playerLabel);
+        battleInfo.add(heroPanel);
         battleInfo.add(enemyLabel);
         battleInfo.add(resultLabel);
         add(battleInfo, BorderLayout.CENTER);
@@ -48,7 +58,7 @@ public class BattlePanel extends JPanel {
             if (enemy.isAlive()) {
                 enemy.attack(player);
             }
-            playerLabel.setText(getPlayerInfo(player));
+            updateHeroLabels(heroes, heroLabels);
             enemyLabel.setText(getEnemyInfo(enemy));
 
             if (!enemy.isAlive()) {
@@ -66,7 +76,7 @@ public class BattlePanel extends JPanel {
             player.takeDamage(enemy.getAttack(), true);
             int damageTaken = oldHealth - player.getHealth();
 
-            playerLabel.setText(getPlayerInfo(player));
+            updateHeroLabels(heroes, heroLabels);
             resultLabel.setText(player.getName() + " defended and took "
                     + damageTaken + " damage.");
 
@@ -79,6 +89,12 @@ public class BattlePanel extends JPanel {
         actions.add(attackButton);
         actions.add(defendButton);
         add(actions, BorderLayout.SOUTH);
+    }
+
+    private void updateHeroLabels(List<Hero> heroes, List<JLabel> heroLabels) {
+        for (int i = 0; i < heroes.size(); i++) {
+            heroLabels.get(i).setText(getPlayerInfo(heroes.get(i)));
+        }
     }
 
     private void loadImages() {
@@ -106,7 +122,7 @@ public class BattlePanel extends JPanel {
         graphics2d.dispose();
     }
 
-    private String getPlayerInfo(Frieren player) {
+    private String getPlayerInfo(Hero player) {
         return player.getName() + " | HP: " + player.getHealth()
                 + " | Attack: " + player.getAttack();
     }

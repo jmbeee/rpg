@@ -2,6 +2,7 @@ package game;
 
 import game.model.AncientKey;
 import game.model.HealthPotion;
+import game.model.Hero;
 import game.model.Inventory;
 import game.model.IronSword;
 import game.view.BattlePanel;
@@ -10,6 +11,8 @@ import game.view.InventoryPanel;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,7 +47,8 @@ public class Main {
                     window.revalidate();
                     window.repaint();
                 };
-                Runnable onContinue = () -> showCamp(window, inventory);
+                Consumer<List<Hero>> onContinue = heroes ->
+                        showCamp(window, inventory, heroes);
                 window.setContentPane(new SelectionPanel(onBack, onContinue));
                 window.revalidate();
             });
@@ -58,15 +62,15 @@ public class Main {
         });
     }
 
-    private static void showCamp(JFrame window, Inventory inventory) {
+    private static void showCamp(JFrame window, Inventory inventory, List<Hero> heroes) {
         Runnable onStart = () -> {
-            window.setContentPane(new BattlePanel());
+            window.setContentPane(new BattlePanel(heroes));
             window.revalidate();
             window.repaint();
         };
         Runnable onInventory = () -> {
-            window.setContentPane(new InventoryPanel(inventory,
-                    () -> showCamp(window, inventory)));
+            window.setContentPane(new InventoryPanel(inventory, heroes,
+                    () -> showCamp(window, inventory, heroes)));
             window.revalidate();
             window.repaint();
         };

@@ -38,6 +38,12 @@ public abstract class GameCharacter {
         return attack;
     }
 
+    public void increaseAttack(int amount) {
+        if (amount > 0) {
+            attack += amount;
+        }
+    }
+
     public int getDefense() {
         return defense;
     }
@@ -48,6 +54,12 @@ public abstract class GameCharacter {
 
     public boolean isAlive() {
         return health > 0;
+    }
+
+    public void heal(int amount) {
+        if (isAlive() && amount > 0) {
+            health = Math.min(maxHealth, health + amount);
+        }
     }
 
     public void takeDamage(int damage) {

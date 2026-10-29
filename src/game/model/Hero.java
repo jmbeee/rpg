@@ -4,6 +4,7 @@ package game.model;
 public abstract class Hero extends GameCharacter {
 
     private int level = 1;
+    private Item equippedItem;
 
     public Hero(String name, int health, int attack, int defense, int speed) {
         super(name, health, attack, defense, speed);
@@ -11,5 +12,18 @@ public abstract class Hero extends GameCharacter {
 
     public int getLevel() {
         return level;
+    }
+
+    public Item getEquippedItem() {
+        return equippedItem;
+    }
+
+    public boolean equip(IronSword sword) {
+        if (equippedItem != null) {
+            return false;
+        }
+        equippedItem = sword;
+        increaseAttack(sword.getAttackBonus());
+        return true;
     }
 }

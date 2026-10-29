@@ -14,6 +14,10 @@ public class HealthPotion extends Item {
         return healingAmount;
     }
 
+    public void useOn(GameCharacter target) {
+        target.heal(healingAmount);
+    }
+
     @Override
     public String getDescription() {
         return "Restores 30 HP";
