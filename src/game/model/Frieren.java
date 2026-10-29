@@ -8,7 +8,8 @@ public class Frieren extends Hero {
     }
 
     @Override
-    public String useAbility() {
-        return "Frieren uses offensive magic!";
+    public String useAbility(GameCharacter target) {
+        int damage = target.takeDamage(getAttack() + 10);
+        return "Frieren used offensive magic for " + damage + " damage.";
     }
 }
