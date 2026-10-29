@@ -23,8 +23,8 @@ import javax.swing.JPanel;
 /** screen for choosing heroes. */
 public class SelectionPanel extends JPanel {
 
+    private static final int MAX_SELECTION = 3;
     private int selectedCount = 0;
-    private final int MAX_SELECTION = 3;
     private JLabel counterLabel;
     private JButton continueButton;
     private List<Hero> selectedHeroes = new ArrayList<>();
@@ -78,7 +78,8 @@ public class SelectionPanel extends JPanel {
             java.io.File imgFile = new java.io.File("assets/heroes/" + data[7]);
             if (imgFile.exists()) {
                 javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgFile.getAbsolutePath());
-                java.awt.Image scaled = icon.getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
+                java.awt.Image scaled = icon.getImage().getScaledInstance(
+                        120, 120, java.awt.Image.SCALE_REPLICATE);
                 JLabel imageLabel = new JLabel(new javax.swing.ImageIcon(scaled));
                 imageLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
                 imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
