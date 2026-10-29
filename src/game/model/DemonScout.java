@@ -8,7 +8,8 @@ public class DemonScout extends Enemy {
     }
 
     @Override
-    public String useAbility() {
-        return "Demon Scout uses sneak attack!";
+    public String useAbility(GameCharacter target) {
+        int damage = target.takeDamage(getAttack() + 5);
+        return "Demon Scout used sneak attack for " + damage + " damage.";
     }
 }
