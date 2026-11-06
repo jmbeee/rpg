@@ -8,6 +8,7 @@ import game.model.HealthPotion;
 import game.model.Hero;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -46,6 +47,7 @@ public class BattlePanel extends JPanel {
     private JButton defendButton;
     private JButton abilityButton;
     private JButton itemButton;
+    private JPanel battlefield;
     private int enemyOffset;
 
     public BattlePanel(GameState state, Runnable onVictory, Runnable onDefeat) {
@@ -83,13 +85,15 @@ public class BattlePanel extends JPanel {
             heroPanel.add(label);
         }
 
-        JPanel battleInfo = new JPanel(new GridLayout(4, 1));
+        JPanel battleInfo = new JPanel(new GridLayout(3, 1));
         battleInfo.setOpaque(false);
         battleInfo.add(heroPanel);
         battleInfo.add(enemyLabel);
         battleInfo.add(resultLabel);
-        battleInfo.add(new JScrollPane(combatLog));
-        add(battleInfo, BorderLayout.CENTER);
+        add(battleInfo, BorderLayout.NORTH);
+
+        battlefield = new BattlefieldPanel();
+        add(battlefield, BorderLayout.CENTER);
     }
 
     private void buildActions() {
@@ -109,7 +113,10 @@ public class BattlePanel extends JPanel {
         actions.add(defendButton);
         actions.add(abilityButton);
         actions.add(itemButton);
-        add(actions, BorderLayout.SOUTH);
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.add(new JScrollPane(combatLog), BorderLayout.CENTER);
+        footer.add(actions, BorderLayout.SOUTH);
+        add(footer, BorderLayout.SOUTH);
     }
 
     private class AttackHandler implements ActionListener {
@@ -260,7 +267,9 @@ public class BattlePanel extends JPanel {
     private void loadImages(List<Hero> heroes) {
         try {
             backgroundImage = ImageIO.read(new File("assets/backgrounds/forest_battle.png"));
-            enemyImage = ImageIO.read(new File("assets/enemies/demon_scout.png"));
+            String enemyName = engine.getEnemy().getClass().getSimpleName()
+                    .replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+            enemyImage = ImageIO.read(new File("assets/enemies/" + enemyName + ".png"));
             for (Hero hero : heroes) {
                 String fileName = hero.getName().toLowerCase() + ".png";
                 heroImages.add(ImageIO.read(new File("assets/heroes/" + fileName)));
@@ -270,23 +279,35 @@ public class BattlePanel extends JPanel {
         }
     }
 
-    @Override
-    protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        Graphics2D graphics2d = (Graphics2D) graphics.create();
-        graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        if (backgroundImage != null) {
-            graphics2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+    private class BattlefieldPanel extends JPanel {
+
+        BattlefieldPanel() {
+            setPreferredSize(new Dimension(760, 330));
         }
-        for (int i = 0; i < heroImages.size(); i++) {
-            graphics2d.drawImage(heroImages.get(i), 40 + (i * 120), 260, 110, 110, null);
+
+        @Override
+        protected void paintComponent(Graphics graphics) {
+            super.paintComponent(graphics);
+            Graphics2D graphics2d = (Graphics2D) graphics.create();
+            graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            if (backgroundImage != null) {
+                graphics2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+            }
+            int heroSize = Math.min(150, getWidth() / 5);
+            for (int i = 0; i < heroImages.size(); i++) {
+                int x = 25 + (i * (heroSize + 15));
+                graphics2d.drawImage(heroImages.get(i), x,
+                        getHeight() - heroSize - 15, heroSize, heroSize, null);
+            }
+            if (enemyImage != null) {
+                int enemySize = Math.min(260, getHeight() - 30);
+                graphics2d.drawImage(enemyImage,
+                        getWidth() - enemySize - 35 + enemyOffset,
+                        getHeight() - enemySize - 15, enemySize, enemySize, null);
+            }
+            graphics2d.dispose();
         }
-        if (enemyImage != null) {
-            graphics2d.drawImage(enemyImage, getWidth() - 260 + enemyOffset,
-                    180, 180, 180, null);
-        }
-        graphics2d.dispose();
     }
 
     private String getHeroInfo(Hero hero) {
