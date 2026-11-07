@@ -1,0 +1,11 @@
+encounter=4
+hero=Frieren|110|IronSword|5
+hero=Himmel|125|None|5
+hero=Heiter|135|None|5
+item=HealthPotion
+item=HealthPotion
+item=AncientKey
+item=HealthPotion
+item=HealthPotion
+item=HealthPotion
+item=HealthPotion
