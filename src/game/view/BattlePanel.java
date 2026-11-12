@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,7 +28,7 @@ public class BattlePanel extends JPanel {
 
     private GameState state;
     private BattleEngine engine;
-    private Runnable onVictory;
+    private Consumer<Boolean> onVictory;
     private Runnable onDefeat;
     private List<JLabel> heroLabels = new ArrayList<>();
     private JLabel enemyLabel;
@@ -39,7 +40,7 @@ public class BattlePanel extends JPanel {
     private JButton itemButton;
     private BattlefieldPanel battlefield;
 
-    public BattlePanel(GameState state, Runnable onVictory, Runnable onDefeat) {
+    public BattlePanel(GameState state, Consumer<Boolean> onVictory, Runnable onDefeat) {
         this.state = state;
         this.onVictory = onVictory;
         this.onDefeat = onDefeat;
@@ -193,8 +194,16 @@ public class BattlePanel extends JPanel {
             combatLog.append("The party won the encounter.\n");
             disableActions();
             state.finishEncounter();
-            JOptionPane.showMessageDialog(this, "Encounter cleared!");
-            onVictory.run();
+            if (state.isJourneyComplete()) {
+                onVictory.accept(true);
+                return;
+            }
+            Object[] choices = {"Proceed to Next Quest", "Return to Camp"};
+            int choice = JOptionPane.showOptionDialog(this,
+                    "Encounter cleared! What would you like to do?",
+                    "Victory", JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE, null, choices, choices[0]);
+            onVictory.accept(choice == 0);
         } else if (engine.isPartyDefeated()) {
             resultLabel.setText("You were defeated.");
             combatLog.append("The entire party was knocked out.\n");

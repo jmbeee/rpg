@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.util.function.Consumer;
 
 /** game starts here. */
 public class Main {
@@ -107,13 +108,17 @@ public class Main {
     }
 
     private void showBattle(GameState state) {
-        Runnable onVictory = () -> {
+        Consumer<Boolean> onVictory = proceed -> {
             if (state.isJourneyComplete()) {
                 showEndScreen(true);
             } else {
                 state.getParty().forEach(hero -> hero.levelUp());
                 state.getInventory().addItem(new HealthPotion());
-                showCamp(state);
+                if (proceed) {
+                    showBattle(state);
+                } else {
+                    showCamp(state);
+                }
             }
         };
         Runnable onDefeat = () -> showEndScreen(false);
