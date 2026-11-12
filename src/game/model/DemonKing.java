@@ -4,7 +4,7 @@ package game.model;
 public class DemonKing extends Enemy {
 
     public DemonKing() {
-        super("Demon King", 300, 38, 13, 16);
+        super("Demon King", 650, 48, 13, 16);
     }
 
     @Override

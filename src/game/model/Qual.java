@@ -4,7 +4,7 @@ package game.model;
 public class Qual extends Enemy {
 
     public Qual() {
-        super("Qual", 130, 25, 5, 13);
+        super("Qual", 180, 30, 5, 13);
     }
 
     @Override

@@ -4,7 +4,7 @@ package game.model;
 public class Macht extends Enemy {
 
     public Macht() {
-        super("Macht", 210, 32, 10, 14);
+        super("Macht", 300, 39, 10, 14);
     }
 
     @Override

@@ -4,7 +4,7 @@ package game.model;
 public class Aura extends Enemy {
 
     public Aura() {
-        super("Aura", 165, 28, 7, 15);
+        super("Aura", 230, 34, 7, 15);
     }
 
     @Override
