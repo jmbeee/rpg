@@ -106,7 +106,7 @@ are included as `saves/slot1.txt` and `saves/slot1.sav`.
 
 ## Who Did What
 
-### Replace with complete name - GitHub: [@jmbeee](https://github.com/jmbeee)
+### [@jmbeee](https://github.com/jmbeee)
 
 This is a solo project. I worked on `Main`, `SelectionPanel`, the
 `GameCharacter`, `Hero`, `Enemy`, and `Item` hierarchies, the hero and enemy
