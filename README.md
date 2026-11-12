@@ -24,7 +24,7 @@ cd oop-rpg
 rm -rf build
 mkdir -p build/classes
 
-javac -d build/classes \
+javac --release 17 -d build/classes \
   src/game/Main.java \
   src/game/SelectionPanel.java \
   src/game/model/*.java \
