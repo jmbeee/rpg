@@ -11,6 +11,7 @@ import game.view.BattlePanel;
 import game.view.CampPanel;
 import game.view.EndPanel;
 import game.view.InventoryPanel;
+import game.view.PartyPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -96,11 +97,13 @@ public class Main {
             return;
         }
         Runnable onStart = () -> showBattle(state);
+        Runnable onParty = () -> showPanel(new PartyPanel(
+                state.getParty(), () -> showCamp(state)));
         Runnable onInventory = () -> showPanel(new InventoryPanel(
                 state.getInventory(), state.getParty(), () -> showCamp(state)));
         Runnable onSave = () -> saveGame(state);
         showPanel(new CampPanel(state.getEncounterIndex() + 1,
-                onStart, onInventory, onSave));
+                onStart, onParty, onInventory, onSave));
     }
 
     private void showBattle(GameState state) {

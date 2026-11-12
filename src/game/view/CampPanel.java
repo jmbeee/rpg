@@ -9,14 +9,14 @@ import javax.swing.JPanel;
 public class CampPanel extends JPanel {
 
     public CampPanel(int encounterNumber, Runnable onStart,
-            Runnable onInventory, Runnable onSave) {
+            Runnable onParty, Runnable onInventory, Runnable onSave) {
         setLayout(new GridLayout(5, 1, 10, 10));
 
         add(new JLabel("Party Camp - Next Encounter: "
                 + encounterNumber, JLabel.CENTER));
 
         JButton partyButton = new JButton("View Party");
-        partyButton.addActionListener(event -> onInventory.run());
+        partyButton.addActionListener(event -> onParty.run());
         add(partyButton);
 
         JButton inventoryButton = new JButton("Inventory");

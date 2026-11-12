@@ -2,32 +2,25 @@ package game.view;
 
 import game.controller.BattleEngine;
 import game.exceptions.InvalidTargetException;
+import game.model.AncientKey;
+import game.model.DemonKing;
 import game.model.Enemy;
 import game.model.GameState;
 import game.model.HealthPotion;
 import game.model.Hero;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.Timer;
 
 /** screen used for battles. */
 public class BattlePanel extends JPanel {
@@ -36,9 +29,6 @@ public class BattlePanel extends JPanel {
     private BattleEngine engine;
     private Runnable onVictory;
     private Runnable onDefeat;
-    private BufferedImage backgroundImage;
-    private BufferedImage enemyImage;
-    private List<BufferedImage> heroImages = new ArrayList<>();
     private List<JLabel> heroLabels = new ArrayList<>();
     private JLabel enemyLabel;
     private JLabel resultLabel;
@@ -47,8 +37,7 @@ public class BattlePanel extends JPanel {
     private JButton defendButton;
     private JButton abilityButton;
     private JButton itemButton;
-    private JPanel battlefield;
-    private int enemyOffset;
+    private BattlefieldPanel battlefield;
 
     public BattlePanel(GameState state, Runnable onVictory, Runnable onDefeat) {
         this.state = state;
@@ -56,9 +45,9 @@ public class BattlePanel extends JPanel {
         this.onDefeat = onDefeat;
         engine = new BattleEngine(state);
         setLayout(new BorderLayout());
-        loadImages(state.getParty());
         buildBattleInfo();
         buildActions();
+        startBossEntrance();
     }
 
     private void buildBattleInfo() {
@@ -92,7 +81,7 @@ public class BattlePanel extends JPanel {
         battleInfo.add(resultLabel);
         add(battleInfo, BorderLayout.NORTH);
 
-        battlefield = new BattlefieldPanel();
+        battlefield = new BattlefieldPanel(state.getParty(), engine.getEnemy());
         add(battlefield, BorderLayout.CENTER);
     }
 
@@ -125,7 +114,7 @@ public class BattlePanel extends JPanel {
         public void actionPerformed(ActionEvent event) {
             try {
                 appendMessages(engine.attackRound());
-                animateEnemyHit();
+                battlefield.animateEnemyHit();
                 finishRound();
             } catch (InvalidTargetException error) {
                 showActionError(error);
@@ -145,7 +134,7 @@ public class BattlePanel extends JPanel {
     private void runAbilityRound() {
         try {
             appendMessages(engine.abilityRound());
-            animateEnemyHit();
+            battlefield.animateEnemyHit();
             finishRound();
         } catch (InvalidTargetException error) {
             showActionError(error);
@@ -245,69 +234,33 @@ public class BattlePanel extends JPanel {
         label.setOpaque(true);
     }
 
-    private void animateEnemyHit() {
-        Timer timer = new Timer(60, null);
-        timer.addActionListener(new ActionListener() {
-            private int frame;
-
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                enemyOffset = frame % 2 == 0 ? -8 : 8;
-                frame++;
-                if (frame == 6) {
-                    enemyOffset = 0;
-                    timer.stop();
-                }
-                repaint();
-            }
-        });
-        timer.start();
+    private void startBossEntrance() {
+        if (!(engine.getEnemy() instanceof DemonKing)) {
+            return;
+        }
+        disableActions();
+        boolean hasKey = state.getInventory().findItem(AncientKey.class) != null;
+        battlefield.startFinalEntrance(hasKey,
+                () -> {
+                    resultLabel.setText("The Ancient Key is glowing...");
+                    combatLog.append("The Ancient Key begins to glow.\n");
+                },
+                () -> combatLog.append(
+                        "The Ancient Key opened the Demon King's castle.\n"),
+                () -> resultLabel.setText(
+                        "Final Encounter - The Demon King Appears!"),
+                () -> {
+                    enableActions();
+                    resultLabel.setText("Final Encounter");
+                    combatLog.append("The Demon King stands before the party.\n");
+                });
     }
 
-    private void loadImages(List<Hero> heroes) {
-        try {
-            backgroundImage = ImageIO.read(new File("assets/backgrounds/forest_battle.png"));
-            String enemyName = engine.getEnemy().getClass().getSimpleName()
-                    .replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
-            enemyImage = ImageIO.read(new File("assets/enemies/" + enemyName + ".png"));
-            for (Hero hero : heroes) {
-                String fileName = hero.getName().toLowerCase() + ".png";
-                heroImages.add(ImageIO.read(new File("assets/heroes/" + fileName)));
-            }
-        } catch (IOException error) {
-            JOptionPane.showMessageDialog(this, "Battle images could not be loaded.");
-        }
-    }
-
-    private class BattlefieldPanel extends JPanel {
-
-        BattlefieldPanel() {
-            setPreferredSize(new Dimension(760, 330));
-        }
-
-        @Override
-        protected void paintComponent(Graphics graphics) {
-            super.paintComponent(graphics);
-            Graphics2D graphics2d = (Graphics2D) graphics.create();
-            graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            if (backgroundImage != null) {
-                graphics2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
-            }
-            int heroSize = Math.min(150, getWidth() / 5);
-            for (int i = 0; i < heroImages.size(); i++) {
-                int x = 25 + (i * (heroSize + 15));
-                graphics2d.drawImage(heroImages.get(i), x,
-                        getHeight() - heroSize - 15, heroSize, heroSize, null);
-            }
-            if (enemyImage != null) {
-                int enemySize = Math.min(260, getHeight() - 30);
-                graphics2d.drawImage(enemyImage,
-                        getWidth() - enemySize - 35 + enemyOffset,
-                        getHeight() - enemySize - 15, enemySize, enemySize, null);
-            }
-            graphics2d.dispose();
-        }
+    private void enableActions() {
+        attackButton.setEnabled(true);
+        defendButton.setEnabled(true);
+        abilityButton.setEnabled(true);
+        itemButton.setEnabled(true);
     }
 
     private String getHeroInfo(Hero hero) {
