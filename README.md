@@ -11,7 +11,7 @@ heroes and fights six demons before facing the Demon King.
 - **Instructor:** Engr. Violdan E. Bayocot
 - **Student:** Replace with complete name
 - **GitHub:** [@jmbeee](https://github.com/jmbeee)
-- **Submission date:** Add submission date
+- **Submission date:** Nov 13, 2026
 
 ## How to Build and Run
 
