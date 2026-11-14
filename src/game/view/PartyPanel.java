@@ -16,13 +16,15 @@ public class PartyPanel extends JPanel {
 
     public PartyPanel(List<Hero> heroes, Runnable onBack) {
         setLayout(new BorderLayout());
+        UiTheme.styleScreen(this);
 
         JLabel title = new JLabel("Your Party", JLabel.CENTER);
-        title.setFont(title.getFont().deriveFont(26.0f));
+        UiTheme.styleTitle(title, 28.0f);
         title.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         add(title, BorderLayout.NORTH);
 
         JPanel heroList = new JPanel(new GridLayout(1, heroes.size(), 15, 15));
+        heroList.setOpaque(false);
         heroList.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         for (Hero hero : heroes) {
@@ -31,13 +33,14 @@ public class PartyPanel extends JPanel {
         add(heroList, BorderLayout.CENTER);
 
         JButton backButton = new JButton("Back");
+        UiTheme.styleButton(backButton);
         backButton.addActionListener(event -> onBack.run());
         add(backButton, BorderLayout.SOUTH);
     }
 
     private JPanel createHeroCard(Hero hero) {
         JPanel card = new JPanel(new BorderLayout(5, 10));
-        card.setBorder(BorderFactory.createEtchedBorder());
+        UiTheme.styleCard(card);
 
         String fileName = hero.getName().toLowerCase() + ".png";
         ImageIcon icon = new ImageIcon("assets/heroes/" + fileName);
@@ -55,6 +58,7 @@ public class PartyPanel extends JPanel {
                 + "Speed: " + hero.getSpeed() + "<br>"
                 + "Equipment: " + equipment
                 + "</div></html>", JLabel.CENTER);
+        details.setForeground(UiTheme.TEXT);
         card.add(details, BorderLayout.CENTER);
         return card;
     }

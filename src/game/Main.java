@@ -12,9 +12,11 @@ import game.view.CampPanel;
 import game.view.EndPanel;
 import game.view.InventoryPanel;
 import game.view.PartyPanel;
+import game.view.UiTheme;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,6 +41,7 @@ public class Main {
     private void start() {
         window = new JFrame("Journey to the Demon King");
         window.setSize(900, 650);
+        window.setMinimumSize(new Dimension(850, 620));
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         showMainMenu();
@@ -54,6 +57,9 @@ public class Main {
         JButton newGameButton = new JButton("New Game");
         JButton loadButton = new JButton("Load Game");
         JButton quitButton = new JButton("Quit");
+        UiTheme.styleButton(newGameButton);
+        UiTheme.styleButton(loadButton);
+        UiTheme.styleButton(quitButton);
         newGameButton.addActionListener(event -> showSelection());
         loadButton.addActionListener(event -> loadGame());
         quitButton.addActionListener(event -> window.dispose());
@@ -62,8 +68,7 @@ public class Main {
         buttons.add(loadButton);
         buttons.add(quitButton);
         JLabel title = new JLabel("Journey to the Demon King", JLabel.CENTER);
-        title.setFont(title.getFont().deriveFont(30.0f));
-        title.setForeground(java.awt.Color.WHITE);
+        UiTheme.styleTitle(title, 32.0f);
         title.setBorder(BorderFactory.createEmptyBorder(30, 10, 10, 10));
         background.add(title, BorderLayout.NORTH);
         background.add(buttons, BorderLayout.CENTER);

@@ -1,6 +1,8 @@
 package game.view;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -10,25 +12,45 @@ public class CampPanel extends JPanel {
 
     public CampPanel(int encounterNumber, Runnable onStart,
             Runnable onParty, Runnable onInventory, Runnable onSave) {
-        setLayout(new GridLayout(5, 1, 10, 10));
+        setLayout(new BorderLayout(20, 24));
+        UiTheme.styleScreen(this);
 
-        add(new JLabel("Party Camp - Next Encounter: "
-                + encounterNumber, JLabel.CENTER));
+        JLabel title = new JLabel("Party Camp", JLabel.CENTER);
+        UiTheme.styleTitle(title, 30.0f);
+        JLabel subtitle = new JLabel("Prepare for Encounter " + encounterNumber,
+                JLabel.CENTER);
+        subtitle.setForeground(UiTheme.MUTED);
+        JPanel header = new JPanel(new GridLayout(2, 1, 4, 4));
+        header.setOpaque(false);
+        header.add(title);
+        header.add(subtitle);
+        add(header, BorderLayout.NORTH);
+
+        JPanel menu = new JPanel(new GridLayout(4, 1, 12, 12));
+        menu.setBackground(UiTheme.PANEL);
+        menu.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UiTheme.CARD),
+                BorderFactory.createEmptyBorder(28, 180, 28, 180)));
 
         JButton partyButton = new JButton("View Party");
+        UiTheme.styleButton(partyButton);
         partyButton.addActionListener(event -> onParty.run());
-        add(partyButton);
+        menu.add(partyButton);
 
         JButton inventoryButton = new JButton("Inventory");
+        UiTheme.styleButton(inventoryButton);
         inventoryButton.addActionListener(event -> onInventory.run());
-        add(inventoryButton);
+        menu.add(inventoryButton);
 
         JButton saveButton = new JButton("Save Game");
+        UiTheme.styleButton(saveButton);
         saveButton.addActionListener(event -> onSave.run());
-        add(saveButton);
+        menu.add(saveButton);
 
         JButton startButton = new JButton("Start Journey");
+        UiTheme.styleButton(startButton);
         startButton.addActionListener(event -> onStart.run());
-        add(startButton);
+        menu.add(startButton);
+        add(menu, BorderLayout.CENTER);
     }
 }

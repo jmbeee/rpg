@@ -24,36 +24,40 @@ public class InventoryPanel extends JPanel {
 
     public InventoryPanel(Inventory inventory, List<Hero> heroes, Runnable onBack) {
         setLayout(new BorderLayout());
+        UiTheme.styleScreen(this);
 
         JLabel title = new JLabel("Inventory", JLabel.CENTER);
-        title.setFont(title.getFont().deriveFont(26.0f));
+        UiTheme.styleTitle(title, 28.0f);
         title.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         add(title, BorderLayout.NORTH);
 
         JPanel itemList = new JPanel();
+        itemList.setOpaque(false);
         itemList.setLayout(new BoxLayout(itemList, BoxLayout.Y_AXIS));
         itemList.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
         for (Item item : inventory.getItems()) {
             JPanel itemCard = new JPanel(new BorderLayout(15, 0));
-            itemCard.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createEtchedBorder(),
-                    BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+            UiTheme.styleCard(itemCard);
 
             String fileName = item.getName().toLowerCase().replace(" ", "_") + ".png";
             ImageIcon icon = new ImageIcon("assets/items/" + fileName);
             Image scaledImage = icon.getImage().getScaledInstance(64, 64, Image.SCALE_REPLICATE);
             itemCard.add(new JLabel(new ImageIcon(scaledImage)), BorderLayout.WEST);
-            itemCard.add(new JLabel("<html><b>" + item.getName() + "</b><br>"
+            JLabel itemDetails = new JLabel("<html><b>" + item.getName() + "</b><br>"
                     + getItemType(item) + "<br>" + item.getDescription()
-                    + "</html>"), BorderLayout.CENTER);
+                    + "</html>");
+            itemDetails.setForeground(UiTheme.TEXT);
+            itemCard.add(itemDetails, BorderLayout.CENTER);
 
             if (item instanceof HealthPotion) {
                 JButton useButton = new JButton("Use");
+                UiTheme.styleButton(useButton);
                 useButton.addActionListener(event -> usePotion(
                         inventory, (HealthPotion) item, heroes, onBack));
                 itemCard.add(useButton, BorderLayout.EAST);
             } else if (item instanceof IronSword) {
                 JButton equipButton = new JButton("Equip");
+                UiTheme.styleButton(equipButton);
                 equipButton.addActionListener(event -> equipSword(
                         inventory, (IronSword) item, heroes, onBack));
                 itemCard.add(equipButton, BorderLayout.EAST);
@@ -65,19 +69,26 @@ public class InventoryPanel extends JPanel {
         add(itemList, BorderLayout.CENTER);
 
         JPanel partyStatus = new JPanel(new GridLayout(heroes.size() + 1, 1, 5, 5));
+        partyStatus.setBackground(UiTheme.PANEL);
+        partyStatus.setForeground(UiTheme.TEXT);
         partyStatus.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 30));
-        partyStatus.add(new JLabel("Party Status"));
+        JLabel statusTitle = new JLabel("Party Status");
+        statusTitle.setForeground(UiTheme.GOLD);
+        partyStatus.add(statusTitle);
         for (Hero hero : heroes) {
             String equipment = hero.getEquippedItem() == null
                     ? "None" : hero.getEquippedItem().getName();
-            partyStatus.add(new JLabel("<html><b>" + hero.getName() + "</b>  HP: "
+            JLabel heroStatus = new JLabel("<html><b>" + hero.getName() + "</b>  HP: "
                     + hero.getHealth() + "/" + hero.getMaxHealth()
                     + "  Level: " + hero.getLevel()
-                    + "<br>Equipment: " + equipment + "</html>"));
+                    + "<br>Equipment: " + equipment + "</html>");
+            heroStatus.setForeground(UiTheme.TEXT);
+            partyStatus.add(heroStatus);
         }
         add(partyStatus, BorderLayout.EAST);
 
         JButton backButton = new JButton("Back");
+        UiTheme.styleButton(backButton);
         backButton.addActionListener(event -> onBack.run());
         add(backButton, BorderLayout.SOUTH);
     }

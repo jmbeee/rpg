@@ -5,6 +5,7 @@ import game.model.Frieren;
 import game.model.Heiter;
 import game.model.Hero;
 import game.model.Himmel;
+import game.view.UiTheme;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -31,20 +32,24 @@ public class SelectionPanel extends JPanel {
 
     public SelectionPanel(Runnable onBack, Consumer<List<Hero>> onContinue) {
         setLayout(new BorderLayout());
+        UiTheme.styleScreen(this);
 
         JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
         JLabel title = new JLabel("Choose Your Party", JLabel.CENTER);
-        title.setFont(title.getFont().deriveFont(24.0f));
+        UiTheme.styleTitle(title, 26.0f);
         title.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
         
         counterLabel = new JLabel("Selected: 0/3", JLabel.CENTER);
         counterLabel.setFont(counterLabel.getFont().deriveFont(16.0f));
+        counterLabel.setForeground(UiTheme.MUTED);
         
         headerPanel.add(title, BorderLayout.NORTH);
         headerPanel.add(counterLabel, BorderLayout.SOUTH);
         add(headerPanel, BorderLayout.NORTH);
 
         JPanel heroesPanel = new JPanel();
+        heroesPanel.setOpaque(false);
         heroesPanel.setLayout(new GridLayout(1, 4, 15, 15));
         heroesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -67,11 +72,12 @@ public class SelectionPanel extends JPanel {
             Hero hero = heroes.get(data[0]);
             JPanel heroCard = new JPanel();
             heroCard.setLayout(new BoxLayout(heroCard, BoxLayout.Y_AXIS));
-            heroCard.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+            UiTheme.styleCard(heroCard);
 
             JLabel nameLabel = new JLabel(data[0], JLabel.CENTER);
             nameLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             nameLabel.setFont(nameLabel.getFont().deriveFont(18.0f));
+            nameLabel.setForeground(UiTheme.GOLD);
             nameLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
             heroCard.add(nameLabel);
             
@@ -112,6 +118,12 @@ public class SelectionPanel extends JPanel {
             
             JCheckBox selectBox = new JCheckBox("Select");
             selectBox.setAlignmentX(JCheckBox.CENTER_ALIGNMENT);
+            selectBox.setBackground(UiTheme.CARD);
+            selectBox.setForeground(UiTheme.TEXT);
+            JLabel[] details = {classLabel, hpLabel, atkLabel, defLabel, spdLabel, abilityLabel};
+            for (JLabel detail : details) {
+                detail.setForeground(UiTheme.TEXT);
+            }
             checkBoxes.add(selectBox);
 
             selectBox.addActionListener(e -> {
@@ -143,10 +155,13 @@ public class SelectionPanel extends JPanel {
         add(heroesPanel, BorderLayout.CENTER);
         
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setOpaque(false);
         JButton backButton = new JButton("Back");
+        UiTheme.styleButton(backButton);
         backButton.addActionListener(e -> onBack.run());
         
         continueButton = new JButton("Continue");
+        UiTheme.styleButton(continueButton);
         continueButton.setEnabled(false);
         continueButton.addActionListener(e ->
                 onContinue.accept(new ArrayList<>(selectedHeroes)));

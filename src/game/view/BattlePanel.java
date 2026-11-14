@@ -46,6 +46,7 @@ public class BattlePanel extends JPanel {
         this.onDefeat = onDefeat;
         engine = new BattleEngine(state);
         setLayout(new BorderLayout());
+        setBackground(UiTheme.BACKGROUND);
         buildBattleInfo();
         buildActions();
         startBossEntrance();
@@ -93,6 +94,10 @@ public class BattlePanel extends JPanel {
         defendButton = new JButton("Defend");
         abilityButton = new JButton("Ability");
         itemButton = new JButton("Use Potion");
+        UiTheme.styleButton(attackButton);
+        UiTheme.styleButton(defendButton);
+        UiTheme.styleButton(abilityButton);
+        UiTheme.styleButton(itemButton);
 
         attackButton.addActionListener(new AttackHandler());
         defendButton.addActionListener(event -> runDefendRound());
