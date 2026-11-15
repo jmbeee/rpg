@@ -17,6 +17,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,6 +34,7 @@ public class Main {
 
     private JFrame window;
     private SaveService saveService = new SaveService();
+    private GameState currentState;
 
     /** Starts the Swing application on the event thread. */
     public static void main(String[] args) {
@@ -43,12 +46,19 @@ public class Main {
         window.setSize(900, 650);
         window.setMinimumSize(new Dimension(850, 620));
         window.setLocationRelativeTo(null);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                handleWindowClosing();
+            }
+        });
         showMainMenu();
         window.setVisible(true);
     }
 
     private void showMainMenu() {
+        currentState = null;
         JLabel background = createMenuBackground();
         JPanel buttons = new JPanel(new GridLayout(3, 1, 10, 10));
         buttons.setOpaque(false);
@@ -98,6 +108,7 @@ public class Main {
     }
 
     private void showCamp(GameState state) {
+        currentState = state;
         if (state.isJourneyComplete()) {
             showEndScreen(true);
             return;
@@ -113,6 +124,7 @@ public class Main {
     }
 
     private void showBattle(GameState state) {
+        currentState = state;
         Consumer<Boolean> onVictory = proceed -> {
             if (state.isJourneyComplete()) {
                 showEndScreen(true);
@@ -134,16 +146,35 @@ public class Main {
         showPanel(new EndPanel(victory, this::showMainMenu));
     }
 
-    private void saveGame(GameState state) {
+    private boolean saveGame(GameState state) {
         Integer slot = chooseSlot("Save Game");
         if (slot == null) {
-            return;
+            return false;
         }
         try {
             saveService.save(slot, state);
             JOptionPane.showMessageDialog(window, "Game saved in slot " + slot + ".");
+            return true;
         } catch (SaveGameException error) {
             JOptionPane.showMessageDialog(window, error.getMessage());
+            return false;
+        }
+    }
+
+    private void handleWindowClosing() {
+        if (currentState == null) {
+            window.dispose();
+            return;
+        }
+        Object[] choices = {"Save and Exit", "Exit Without Saving", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(window,
+                "Would you like to save before closing the game?",
+                "Close Game", JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+        if (choice == 0 && saveGame(currentState)) {
+            window.dispose();
+        } else if (choice == 1) {
+            window.dispose();
         }
     }
 
